@@ -13,34 +13,45 @@ public class CustomerController : Controller
     private readonly ICustomerService _customerService;
     private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<CustomerController> _logger;
 
-    public CustomerController(ICustomerService customerService, AppDbContext context, IConfiguration configuration)
+    public CustomerController(ICustomerService customerService, AppDbContext context, IConfiguration configuration, ILogger<CustomerController> logger)
     {
         _customerService = customerService;
         _context = context;
         _configuration = configuration;
+        _logger = logger;
     }
 
 
 
     public async Task<IActionResult> Index(string? searchName, string? searchPhone)
     {
-        IEnumerable<CustomerViewModel> customers;
-        if (!string.IsNullOrWhiteSpace(searchName))
+        try
         {
-            customers = await _customerService.FindCustomersByNameAsync(searchName);
+            IEnumerable<CustomerViewModel> customers;
+            if (!string.IsNullOrWhiteSpace(searchName))
+            {
+                customers = await _customerService.FindCustomersByNameAsync(searchName);
+            }
+            else if (!string.IsNullOrWhiteSpace(searchPhone))
+            {
+                customers = await _customerService.FindCustomersByPhoneAsync(searchPhone);
+            }
+            else
+            {
+                customers = await _customerService.GetAllCustomersAsync();
+            }
+            ViewBag.SearchName = searchName;
+            ViewBag.SearchPhone = searchPhone;
+            return View(customers);
         }
-        else if (!string.IsNullOrWhiteSpace(searchPhone))
+        catch (Exception ex)
         {
-            customers = await _customerService.FindCustomersByPhoneAsync(searchPhone);
+            _logger.LogError(ex, "Error loading customers with search parameters: Name='{SearchName}', Phone='{SearchPhone}'", searchName, searchPhone);
+            TempData["ErrorMessage"] = "An error occurred while loading customers. Please try again.";
+            return View(new List<CustomerViewModel>());
         }
-        else
-        {
-            customers = await _customerService.GetAllCustomersAsync();
-        }
-        ViewBag.SearchName = searchName;
-        ViewBag.SearchPhone = searchPhone;
-        return View(customers);
     }
 
     public async Task<IActionResult> Details(Guid id)
