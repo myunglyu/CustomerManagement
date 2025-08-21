@@ -57,12 +57,11 @@ This is a local-only, secure customer management system for optical stores, buil
   dotnet publish WooriOptical/WooriOptical.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
   dotnet publish WooriOptical.Desktop/WooriOptical.Desktop.csproj -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true
   ```
-- Copy the contents of the `publish` folders to your deployment directory (e.g., `New Folder`).
+- Copy the contents of the `publish` folders to your deployment directory (e.g., `Customer Management`).
 
 ## Notes
 - The admin account is seeded only if it does not already exist.
 - The backend will refuse all non-local requests.
-- For any issues, check the logs or contact the maintainer.
 
 ---
 
