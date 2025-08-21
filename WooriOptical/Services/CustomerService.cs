@@ -133,14 +133,14 @@ public class CustomerService : ICustomerService
         }
     }
 
-    // public async Task DeleteCustomerAsync(Guid customerId)
-    // {
-    //     var entity = await _context.Customers.FindAsync(customerId);
-    //     if (entity != null)
-    //     {
-    //         _context.Customers.Remove(entity);
-    //         await _context.SaveChangesAsync();
-    //     }
-    // }
+    public async Task DeleteCustomerAsync(Guid customerId)
+    {
+        var entity = await _context.Customers.FindAsync(customerId);
+        if (entity != null)
+        {
+            _context.Customers.Remove(entity);
+            await _context.SaveChangesAsync();
+        }
+    }
 
 }

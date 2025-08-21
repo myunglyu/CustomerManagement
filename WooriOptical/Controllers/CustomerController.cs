@@ -253,6 +253,14 @@ public class CustomerController : Controller
         var order = await _context.Orders.FindAsync(id);
         if (order == null)
             return NotFound();
+
+        // Load prescription details if present
+        if (order.PrescriptionId != Guid.Empty)
+        {
+            var prescription = await _context.Prescriptions.FindAsync(order.PrescriptionId);
+            ViewBag.Prescription = prescription; // may be null if not found
+        }
+
         return View(order);
     }
 

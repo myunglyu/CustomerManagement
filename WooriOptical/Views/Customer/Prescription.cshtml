@@ -112,7 +112,7 @@
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Save Prescription</button>
             <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-secondary">Cancel</a>
-            <a asp-action="DeletePrescription" asp-route-id="@Model.PrescriptionId" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this prescription?')">Delete</a>
+            @* <a asp-action="DeletePrescription" asp-route-id="@Model.PrescriptionId" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this prescription?')">Delete</a> *@
         </div>
     </form>
 </div>
