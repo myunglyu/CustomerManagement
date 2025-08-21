@@ -7,21 +7,32 @@ namespace WooriOptical.Models
     public class CustomerViewModel
     {
         public Guid CustomerId { get; set; }
+        
+        [Required(ErrorMessage = "Customer name is required.")]
+        [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
         public string? Name { get; set; }
 
-    // Validate common email format; allow empty (not required) but validate when provided
-    [RegularExpression(@"^[^\s@]+@[^\s@]+\.[^\s@]+$", ErrorMessage = "Please enter a valid email address.")]
-    public string? Email { get; set; }
+        // Validate common email format; allow empty (not required) but validate when provided
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [StringLength(254, ErrorMessage = "Email cannot exceed 254 characters.")]
+        public string? Email { get; set; }
 
-    // Stored as digits-only, but allow common phone input formats client-side (e.g. (123) 456-7890, 123-456-7890)
-    // Validation will accept optional +1 country code and common separators; final normalization occurs in controller.
-    [RegularExpression(@"^(\+1[\s-]?)?(\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}$", ErrorMessage = "Please enter a valid US phone number.")]
-    public string? Phone { get; set; }
+        // Stored as digits-only, but allow common phone input formats client-side (e.g. (123) 456-7890, 123-456-7890)
+        // Validation will accept optional +1 country code and common separators; final normalization occurs in controller.
+        [RegularExpression(@"^(\+1[\s-]?)?(\(?\d{3}\)?[\s.-]?)\d{3}[\s.-]?\d{4}$", ErrorMessage = "Please enter a valid US phone number.")]
+        public string? Phone { get; set; }
 
-    public string? Street { get; set; }
-    public string? City { get; set; }
-    public string? State { get; set; }
-    public string? Zip { get; set; }
+        [StringLength(200, ErrorMessage = "Street address cannot exceed 200 characters.")]
+        public string? Street { get; set; }
+        
+        [StringLength(100, ErrorMessage = "City cannot exceed 100 characters.")]
+        public string? City { get; set; }
+        
+        [StringLength(50, ErrorMessage = "State cannot exceed 50 characters.")]
+        public string? State { get; set; }
+        
+        [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = "Please enter a valid ZIP code (12345 or 12345-1234).")]
+        public string? Zip { get; set; }
         public List<Prescription>? Prescriptions { get; set; }
         public List<Order>? Orders { get; set; }
 

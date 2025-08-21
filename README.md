@@ -1,6 +1,6 @@
 # Woori Optical Customer Management
 
-This is a local-only, secure customer management system for optical stores, built with ASP.NET Core MVC, Entity Framework Core (SQLite), and Identity. It also includes a WinForms + WebView2 desktop host and PWA support.
+This is a production-ready, secure customer management system for optical stores, built with ASP.NET Core MVC, Entity Framework Core (SQLite), and Identity. It includes a WinForms + WebView2 desktop host and PWA support.
 
 ## Features
 - Customer, order, and prescription management
@@ -11,6 +11,45 @@ This is a local-only, secure customer management system for optical stores, buil
 - WinForms + WebView2 desktop host
 - Single-file, self-contained deployment
 - Print support
+- **Production Features:**
+  - Structured logging with event log support
+  - Global error handling and custom error pages
+  - Comprehensive input validation
+  - Response caching for improved performance
+  - Database backup and restore functionality
+  - Health check endpoints
+  - Environment-specific configuration
+
+## Production Readiness
+
+This application includes enterprise-level features for production deployment:
+
+### 🔒 Security
+- Input validation and sanitization
+- CSRF protection on all forms
+- Secure password policies
+- Local-only access restrictions
+
+### 📊 Monitoring & Logging
+- Structured logging with console, debug, and Windows Event Log
+- Health check endpoint at `/health`
+- Error tracking with unique request IDs
+- Performance monitoring capabilities
+
+### 🔄 Data Management
+- Automated database backup service
+- Data validation with comprehensive error messages
+- Transaction handling for data integrity
+
+### ⚡ Performance
+- Response caching middleware
+- Memory caching for frequently accessed data
+- Optimized database queries
+- Asset optimization
+
+### 🧪 Testing
+- Unit test project structure included
+- Test framework ready for business logic testing
 
 ## Getting Started
 

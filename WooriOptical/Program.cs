@@ -5,9 +5,25 @@ using WooriOptical.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+if (builder.Environment.IsProduction() && OperatingSystem.IsWindows())
+{
+    builder.Logging.AddEventLog();
+}
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add response caching
+builder.Services.AddResponseCaching();
+builder.Services.AddMemoryCache();
+
+// Add health checks
+builder.Services.AddHealthChecks();
 
 // Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -42,6 +58,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 // Register services
 builder.Services.AddScoped<WooriOptical.Services.ICustomerService, WooriOptical.Services.CustomerService>();
+builder.Services.AddScoped<WooriOptical.Services.IBackupService, WooriOptical.Services.BackupService>();
 // Register IHttpClientFactory for outbound HTTP calls (USPS lookup)
 builder.Services.AddHttpClient();
 
@@ -66,6 +83,10 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+else
+{
+    app.UseDeveloperExceptionPage();
+}
 
 
 // Restrict to local access only
@@ -82,6 +103,7 @@ app.Use(async (context, next) =>
 });
 
 app.UseHttpsRedirection();
+app.UseResponseCaching();
 app.UseRouting();
 
 app.UseAuthentication();
@@ -94,6 +116,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+// Add health check endpoint
+app.MapHealthChecks("/health");
 
 
 // Seed admin account from admin.json in all environments
