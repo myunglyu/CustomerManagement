@@ -1,0 +1,227 @@
+@model WooriOptical.Models.Order
+
+@{
+    ViewData["Title"] = "Create New Order";
+}
+
+<div class="container">
+    <h2>Create New Order</h2>
+    
+    <form asp-action="CreateOrder" method="post">
+        <input asp-for="CustomerId" type="hidden" />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="OrderDate" class="control-label">Order Date</label>
+                    <input asp-for="OrderDate" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="OrderDate" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="PrescriptionId" class="control-label">Prescription</label>
+                    <select asp-for="PrescriptionId" class="form-select">
+                        <option value="">-- Select Prescription --</option>
+                        @if (ViewBag.Prescriptions != null)
+                        {
+                            @foreach (var prescription in (List<WooriOptical.Models.Prescription>)ViewBag.Prescriptions)
+                            {
+                                <option value="@prescription.PrescriptionId">
+                                    @prescription.DateIssued.ToString("MM/dd/yyyy") - SPH: R @prescription.RSphere.ToString("+0.00;-0.00")/L @prescription.LSphere.ToString("+0.00;-0.00") | CYL: R @prescription.RCylinder.ToString("+0.00;-0.00")/L @prescription.LCylinder.ToString("+0.00;-0.00") | AXIS: R @prescription.RAxis°/L @prescription.LAxis°
+                                </option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="PrescriptionId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Height" class="control-label">Height (mm)</label>
+                    <input asp-for="Height" type="number" step="0.1" class="form-control" />
+                    <span asp-validation-for="Height" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Frame Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Frame Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group mb-3">
+                            <label asp-for="Frame" class="control-label">Frame Description</label>
+                            <input asp-for="Frame" class="form-control" placeholder="e.g., Ray-Ban RB2140 Wayfarer" />
+                            <span asp-validation-for="Frame" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="FramePrice" class="control-label">Frame Price</label>
+                            <input asp-for="FramePrice" class="form-control" placeholder="150.00" />
+                            <span asp-validation-for="FramePrice" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lens Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Lens Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group mb-3">
+                            <label asp-for="Lens" class="control-label">Lens Description</label>
+                            <input asp-for="Lens" class="form-control" placeholder="e.g., Progressive Anti-Glare" />
+                            <span asp-validation-for="Lens" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="LensPrice" class="control-label">Lens Price</label>
+                            <input asp-for="LensPrice" class="form-control" placeholder="250.00" />
+                            <span asp-validation-for="LensPrice" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Pricing & Payment</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="TotalAmount" class="control-label">Total Amount</label>
+                            <input asp-for="TotalAmount" type="number" step="0.01" class="form-control" id="totalAmount" />
+                            <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="Discount" class="control-label">Discount</label>
+                            <input asp-for="Discount" class="form-control" placeholder="10% or 50.00" />
+                            <span asp-validation-for="Discount" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="FinalAmount" class="control-label">Final Amount</label>
+                            <input asp-for="FinalAmount" class="form-control" />
+                            <span asp-validation-for="FinalAmount" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="Deposit" class="control-label">Deposit Paid</label>
+                            <input asp-for="Deposit" class="form-control" placeholder="0.00" />
+                            <span asp-validation-for="Deposit" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="Balance" class="control-label">Balance Due</label>
+                            <input asp-for="Balance" class="form-control" readonly />
+                            <span asp-validation-for="Balance" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create Order</button>
+            <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const framePrice = document.querySelector('input[name="FramePrice"]');
+            const lensPrice = document.querySelector('input[name="LensPrice"]');
+            const totalAmount = document.getElementById('totalAmount');
+            const discount = document.querySelector('input[name="Discount"]');
+            const finalAmount = document.querySelector('input[name="FinalAmount"]');
+            const deposit = document.querySelector('input[name="Deposit"]');
+            const balance = document.querySelector('input[name="Balance"]');
+
+            function calculateTotals() {
+                const frame = parseFloat(framePrice.value) || 0;
+                const lens = parseFloat(lensPrice.value) || 0;
+                const total = frame + lens;
+                totalAmount.value = total.toFixed(2);
+
+                calculateFinalAmount();
+            }
+
+            function calculateFinalAmount() {
+                const total = parseFloat(totalAmount.value) || 0;
+                const discountValue = discount.value;
+                let final = total;
+
+                if (discountValue) {
+                    if (discountValue.includes('%')) {
+                        const percent = parseFloat(discountValue.replace('%', ''));
+                        final = total - (total * percent / 100);
+                    } else {
+                        final = total - parseFloat(discountValue);
+                    }
+                }
+
+                finalAmount.value = final.toFixed(2);
+                calculateBalance();
+            }
+
+            function calculateBalance() {
+                const final = parseFloat(finalAmount.value) || 0;
+                const dep = parseFloat(deposit.value) || 0;
+                const bal = final - dep;
+                balance.value = bal.toFixed(2);
+            }
+
+            framePrice.addEventListener('input', calculateTotals);
+            lensPrice.addEventListener('input', calculateTotals);
+            discount.addEventListener('input', calculateFinalAmount);
+            deposit.addEventListener('input', calculateBalance);
+        });
+    </script>
+}
+
+<style>
+    .card-header h4 {
+        margin: 0;
+        color: #495057;
+    }
+    .form-group label {
+        font-weight: 600;
+    }
+    .card {
+        border: 1px solid #dee2e6;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>

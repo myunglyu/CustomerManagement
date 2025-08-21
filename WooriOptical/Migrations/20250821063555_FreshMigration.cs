@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WooriOptical.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FreshMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,10 @@ namespace WooriOptical.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Email = table.Column<string>(type: "TEXT", nullable: true),
                     Phone = table.Column<string>(type: "TEXT", nullable: true),
-                    Address = table.Column<string>(type: "TEXT", nullable: true)
+                    Street = table.Column<string>(type: "TEXT", nullable: true),
+                    City = table.Column<string>(type: "TEXT", nullable: true),
+                    State = table.Column<string>(type: "TEXT", nullable: true),
+                    Zip = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,6 +47,7 @@ namespace WooriOptical.Migrations
                     FinalAmount = table.Column<string>(type: "TEXT", nullable: true),
                     Deposit = table.Column<string>(type: "TEXT", nullable: true),
                     Balance = table.Column<string>(type: "TEXT", nullable: true),
+                    BalancePaid = table.Column<string>(type: "TEXT", nullable: true),
                     PayoffStatus = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>

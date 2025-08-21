@@ -13,6 +13,6 @@ public interface ICustomerService
     Task<IEnumerable<CustomerViewModel>> FindCustomersByNameAsync(string name);
     Task AddCustomerAsync(CustomerViewModel customer);
     Task UpdateCustomerAsync(CustomerViewModel customer);
-    Task DeleteCustomerAsync(Guid customerId);
+    // Task DeleteCustomerAsync(Guid customerId);
 
 }

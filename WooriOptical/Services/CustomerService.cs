@@ -24,7 +24,10 @@ public class CustomerService : ICustomerService
                 Name = c.Name,
                 Email = c.Email,
                 Phone = c.Phone,
-                Address = c.Address
+                Street = c.Street,
+                City = c.City,
+                State = c.State,
+                Zip = c.Zip
             })
             .ToListAsync();
     }
@@ -39,7 +42,10 @@ public class CustomerService : ICustomerService
                 Name = c.Name,
                 Email = c.Email,
                 Phone = c.Phone,
-                Address = c.Address
+                Street = c.Street,
+                City = c.City,
+                State = c.State,
+                Zip = c.Zip
             })
             .ToListAsync();
     }
@@ -54,24 +60,44 @@ public class CustomerService : ICustomerService
                 Name = c.Name,
                 Email = c.Email,
                 Phone = c.Phone,
-                Address = c.Address
+                Street = c.Street,
+                City = c.City,
+                State = c.State,
+                Zip = c.Zip
             })
             .ToListAsync();
     }
 
     public async Task<CustomerViewModel?> GetCustomerByIdAsync(Guid customerId)
     {
-        return await _context.Customers
+        var customer = await _context.Customers
             .Where(c => c.CustomerId == customerId)
-            .Select(c => new CustomerViewModel
-            {
-                CustomerId = c.CustomerId,
-                Name = c.Name,
-                Email = c.Email,
-                Phone = c.Phone,
-                Address = c.Address
-            })
             .FirstOrDefaultAsync();
+
+        if (customer == null)
+            return null;
+
+        var prescriptions = await _context.Prescriptions
+            .Where(p => p.CustomerId == customerId)
+            .ToListAsync();
+
+        var orders = await _context.Orders
+            .Where(o => o.CustomerId == customerId)
+            .ToListAsync();
+
+        return new CustomerViewModel
+        {
+            CustomerId = customer.CustomerId,
+            Name = customer.Name,
+            Email = customer.Email,
+            Phone = customer.Phone,
+            Street = customer.Street,
+            City = customer.City,
+            State = customer.State,
+            Zip = customer.Zip,
+            Prescriptions = prescriptions,
+            Orders = orders
+        };
     }
 
     public async Task AddCustomerAsync(CustomerViewModel customer)
@@ -82,7 +108,10 @@ public class CustomerService : ICustomerService
             Name = customer.Name,
             Email = customer.Email,
             Phone = customer.Phone,
-            Address = customer.Address
+                Street = customer.Street,
+                City = customer.City,
+                State = customer.State,
+                Zip = customer.Zip
         };
         _context.Customers.Add(entity);
         await _context.SaveChangesAsync();
@@ -96,19 +125,22 @@ public class CustomerService : ICustomerService
             entity.Name = customer.Name;
             entity.Email = customer.Email;
             entity.Phone = customer.Phone;
-            entity.Address = customer.Address;
+                entity.Street = customer.Street;
+                entity.City = customer.City;
+                entity.State = customer.State;
+                entity.Zip = customer.Zip;
             await _context.SaveChangesAsync();
         }
     }
 
-    public async Task DeleteCustomerAsync(Guid customerId)
-    {
-        var entity = await _context.Customers.FindAsync(customerId);
-        if (entity != null)
-        {
-            _context.Customers.Remove(entity);
-            await _context.SaveChangesAsync();
-        }
-    }
+    // public async Task DeleteCustomerAsync(Guid customerId)
+    // {
+    //     var entity = await _context.Customers.FindAsync(customerId);
+    //     if (entity != null)
+    //     {
+    //         _context.Customers.Remove(entity);
+    //         await _context.SaveChangesAsync();
+    //     }
+    // }
 
 }

@@ -23,7 +23,7 @@ namespace WooriOptical.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Address")
+                    b.Property<string>("City")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -33,6 +33,15 @@ namespace WooriOptical.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Zip")
                         .HasColumnType("TEXT");
 
                     b.HasKey("CustomerId");
@@ -47,6 +56,9 @@ namespace WooriOptical.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Balance")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BalancePaid")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")

@@ -11,8 +11,8 @@ using WooriOptical.Models;
 namespace WooriOptical.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250821050659_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250821063555_FreshMigration")]
+    partial class FreshMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,7 +26,7 @@ namespace WooriOptical.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Address")
+                    b.Property<string>("City")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
@@ -36,6 +36,15 @@ namespace WooriOptical.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Phone")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("State")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Zip")
                         .HasColumnType("TEXT");
 
                     b.HasKey("CustomerId");
@@ -50,6 +59,9 @@ namespace WooriOptical.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Balance")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("BalancePaid")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CustomerId")

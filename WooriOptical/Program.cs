@@ -14,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register services
 builder.Services.AddScoped<WooriOptical.Services.ICustomerService, WooriOptical.Services.CustomerService>();
+// Register IHttpClientFactory for outbound HTTP calls (USPS lookup)
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

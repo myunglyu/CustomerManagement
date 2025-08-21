@@ -1,0 +1,137 @@
+@model WooriOptical.Models.Prescription
+
+@{
+    ViewData["Title"] = "Add New Prescription";
+}
+
+<div class="container">
+    <h2>Add New Prescription</h2>
+    
+    <form asp-action="CreatePrescription" method="post">
+        <input asp-for="CustomerId" type="hidden" />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="DateIssued" class="control-label">Date Issued</label>
+                    <input asp-for="DateIssued" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="DateIssued" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="PD" class="control-label">Pupillary Distance (PD)</label>
+                    <input asp-for="PD" type="number" step="0.1" class="form-control" />
+                    <span asp-validation-for="PD" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Eye (OD) Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Right Eye (OD)</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="RSphere" class="control-label">Sphere (SPH)</label>
+                            <input asp-for="RSphere" type="number" step="0.25" class="form-control" />
+                            <span asp-validation-for="RSphere" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="RCylinder" class="control-label">Cylinder (CYL)</label>
+                            <input asp-for="RCylinder" type="number" step="0.25" class="form-control" />
+                            <span asp-validation-for="RCylinder" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="RAxis" class="control-label">Axis</label>
+                            <input asp-for="RAxis" type="number" min="0" max="180" class="form-control" />
+                            <span asp-validation-for="RAxis" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Left Eye (OS) Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>Left Eye (OS)</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="LSphere" class="control-label">Sphere (SPH)</label>
+                            <input asp-for="LSphere" type="number" step="0.25" class="form-control" />
+                            <span asp-validation-for="LSphere" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="LCylinder" class="control-label">Cylinder (CYL)</label>
+                            <input asp-for="LCylinder" type="number" step="0.25" class="form-control" />
+                            <span asp-validation-for="LCylinder" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label asp-for="LAxis" class="control-label">Axis</label>
+                            <input asp-for="LAxis" type="number" min="0" max="180" class="form-control" />
+                            <span asp-validation-for="LAxis" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Add" class="control-label">Add (Reading Addition)</label>
+                    <input asp-for="Add" type="number" step="0.25" class="form-control" />
+                    <span asp-validation-for="Add" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="Notes" class="control-label">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes or special instructions..."></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Create Prescription</button>
+            <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<style>
+    .card-header h4 {
+        margin: 0;
+        color: #495057;
+    }
+    .form-group label {
+        font-weight: 600;
+    }
+    .card {
+        border: 1px solid #dee2e6;
+    }
+    .card-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+    }
+</style>

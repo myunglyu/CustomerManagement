@@ -1,0 +1,166 @@
+@model WooriOptical.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container">
+    <h2>Order Details</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>Order #@Model.OrderId.ToString().Substring(0, 8)</h4>
+            <div>
+                @if (Model.PayoffStatus == "Partial" || Model.PayoffStatus == "Pending")
+                {
+                    <a asp-action="EditOrder" asp-route-id="@Model.OrderId" class="btn btn-warning btn-sm">Edit Order</a>
+                }
+                <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-secondary btn-sm">Back to Customer</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd")</p>
+                    <p><strong>Height:</strong> @Model.Height mm</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Payment Status:</strong> 
+                        @if (Model.PayoffStatus == "Paid")
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else if (Model.PayoffStatus == "Partial")
+                        {
+                            <span class="badge bg-warning">Partial</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Pending</span>
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Frame Details -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Frame Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <p><strong>Frame:</strong> @Model.Frame</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Price:</strong> $@Model.FramePrice</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lens Details -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Lens Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <p><strong>Lens:</strong> @Model.Lens</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Price:</strong> $@Model.LensPrice</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Summary -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Pricing Summary</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        <tr>
+                            <td><strong>Total Amount:</strong></td>
+                            <td>$@Model.TotalAmount.ToString("F2")</td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(Model.Discount))
+                        {
+                            <tr>
+                                <td><strong>Discount:</strong></td>
+                                <td>@Model.Discount</td>
+                            </tr>
+                        }
+                        <tr class="table-active">
+                            <td><strong>Final Amount:</strong></td>
+                            <td><strong>$@Model.FinalAmount</strong></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-borderless">
+                        @if (!string.IsNullOrEmpty(Model.Deposit))
+                        {
+                            <tr>
+                                <td><strong>Deposit Paid:</strong></td>
+                                <td>$@Model.Deposit</td>
+                            </tr>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Balance))
+                        {
+                            <tr class="@(Model.PayoffStatus == "Paid" ? "text-success" : "text-warning")">
+                                <td><strong>Balance Due:</strong></td>
+                                <td><strong>$@Model.Balance</strong></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.PayoffStatus == "Pending")
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Payment Pending:</strong> This order requires payment. Total amount due: $@Model.FinalAmount. 
+            <a asp-action="EditOrder" asp-route-id="@Model.OrderId" class="alert-link">Click here to process payment</a>.
+        </div>
+    }
+    else if (Model.PayoffStatus == "Partial")
+    {
+        <div class="alert alert-warning" role="alert">
+            <strong>Payment Required:</strong> This order has a remaining balance of $@Model.Balance. 
+            <a asp-action="EditOrder" asp-route-id="@Model.OrderId" class="alert-link">Click here to update payment</a>.
+        </div>
+    }
+    else if (Model.PayoffStatus == "Paid")
+    {
+        <div class="alert alert-success" role="alert">
+            <strong>Payment Complete:</strong> This order has been fully paid.
+        </div>
+    }
+</div>
+
+<style>
+    .card-header h4 {
+        margin: 0;
+        color: #495057;
+    }
+    .badge {
+        font-size: 0.9em;
+    }
+    .table-borderless td {
+        border: none;
+        padding: 0.25rem 0.5rem;
+    }
+    .alert-link {
+        font-weight: bold;
+    }
+</style>
