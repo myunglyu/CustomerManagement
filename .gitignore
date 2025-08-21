@@ -29,9 +29,29 @@ ScaffoldingReadMe.txt
 # Entity Framework
 *.dbmdl
 
+
 # Publish outputs
 publish/
+WooriOptical/bin/
+WooriOptical/obj/
+WooriOptical.Desktop/bin/
+WooriOptical.Desktop/obj/
+WooriOptical/bin/Release/
+WooriOptical.Desktop/bin/Release/
+WooriOptical/bin/Debug/
+WooriOptical.Desktop/bin/Debug/
+**/publish/
+**/publish/*.exe
+**/publish/*.dll
 
 # Rider
 .idea/
 *.sln.iml
+
+.fake
+
+#tmp
+New Folder/
+
+#Admin Account
+WooriOptical/admin.json

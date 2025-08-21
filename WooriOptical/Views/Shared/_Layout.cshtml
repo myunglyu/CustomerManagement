@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WooriOptical.styles.css" asp-append-version="true" />
     <link href="~/css/print.css" media="print" rel="stylesheet" />
+    <link rel="manifest" href="~/manifest.json" />
+    <meta name="theme-color" content="#0d6efd">
 </head>
 <body>
     <header>
@@ -31,6 +33,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -49,6 +52,13 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/service-worker.js');
+        });
+    }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

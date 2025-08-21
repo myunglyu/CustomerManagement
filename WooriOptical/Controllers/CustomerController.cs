@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using WooriOptical.Models;
 using WooriOptical.Services;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WooriOptical.Controllers;
 
+[Authorize]
 public class CustomerController : Controller
 {
     private readonly ICustomerService _customerService;

@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using WooriOptical.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,12 +13,51 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Add Identity services
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => {
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
+// Configure Identity options to disable registration
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Disable user registration
+    options.SignIn.RequireConfirmedAccount = false;
+});
+
+// Configure application cookie
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
 // Register services
 builder.Services.AddScoped<WooriOptical.Services.ICustomerService, WooriOptical.Services.CustomerService>();
 // Register IHttpClientFactory for outbound HTTP calls (USPS lookup)
 builder.Services.AddHttpClient();
 
+
 var app = builder.Build();
+
+// Open browser to app URL on startup
+// var url = "http://localhost:5000";
+// try
+// {
+//     using var process = new System.Diagnostics.Process();
+//     process.StartInfo.FileName = url;
+//     process.StartInfo.UseShellExecute = true;
+//     process.Start();
+// }
+// catch { /* Ignore errors if browser can't be opened */ }
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -27,17 +67,76 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+// Restrict to local access only
+app.Use(async (context, next) =>
+{
+    var remoteIp = context.Connection.RemoteIpAddress;
+    if (remoteIp == null || !System.Net.IPAddress.IsLoopback(remoteIp))
+    {
+        context.Response.StatusCode = 403;
+        await context.Response.WriteAsync("Local access only.");
+        return;
+    }
+    await next();
+});
+
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
+
+
+// Seed admin account from admin.json in all environments
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var logger = scope.ServiceProvider.GetService<ILoggerFactory>()?.CreateLogger("SeedAdmin");
+    var adminJsonPath = Path.Combine(AppContext.BaseDirectory, "admin.json");
+    if (File.Exists(adminJsonPath))
+    {
+        try
+        {
+            var json = await File.ReadAllTextAsync(adminJsonPath);
+            if (!string.IsNullOrWhiteSpace(json))
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(json);
+                var root = doc.RootElement;
+                var userName = root.GetProperty("UserName").GetString();
+                var email = root.TryGetProperty("Email", out var emailProp) ? emailProp.GetString() : null;
+                var password = root.GetProperty("Password").GetString();
+                if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password))
+                {
+                    var adminUser = await userManager.FindByNameAsync(userName);
+                    if (adminUser == null)
+                    {
+                        var user = new IdentityUser { UserName = userName, Email = email };
+                        var result = await userManager.CreateAsync(user, password);
+                        if (!result.Succeeded)
+                        {
+                            logger?.LogError("Failed to create admin user: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
+                            throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                        }
+                        await userManager.AddToRoleAsync(user, "Admin");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError(ex, "Failed to read or parse admin.json");
+        }
+    }
+}
 
 
 app.Run();
