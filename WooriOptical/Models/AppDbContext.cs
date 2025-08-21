@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace WooriOptical.Models
+namespace WooriOptical.Models;
+
+public class AppDbContext : DbContext
 {
-    public class AppDbContext : DbContext
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {
-        }
-        // Add DbSet<T> properties here, e.g.:
-        // public DbSet<Customer> Customers { get; set; }
     }
+    public DbSet<Customer> Customers { get; set; }
+    public DbSet<Prescription> Prescriptions { get; set; }
+    public DbSet<Order> Orders { get; set; }
 }
+
