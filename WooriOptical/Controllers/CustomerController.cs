@@ -53,8 +53,7 @@ public class CustomerController : Controller
 
     public IActionResult Create()
     {
-    ViewBag.GooglePlacesApiKey = _configuration["GooglePlaces:ApiKey"];
-    return View();
+        return View();
     }
 
     [HttpPost]
@@ -271,6 +270,14 @@ public class CustomerController : Controller
         var order = await _context.Orders.FindAsync(id);
         if (order == null)
             return NotFound();
+
+        // Get customer's prescriptions for dropdown
+        var prescriptions = await _context.Prescriptions
+            .Where(p => p.CustomerId == order.CustomerId)
+            .OrderByDescending(p => p.DateIssued)
+            .ToListAsync();
+        ViewBag.Prescriptions = prescriptions;
+
         return View(order);
     }
 

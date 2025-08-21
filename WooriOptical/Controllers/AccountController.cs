@@ -1,3 +1,4 @@
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -5,7 +6,6 @@ using WooriOptical.Models;
 
 namespace WooriOptical.Controllers;
 
-[AllowAnonymous]
 public class AccountController : Controller
 {
     private readonly SignInManager<IdentityUser> _signInManager;
@@ -15,6 +15,42 @@ public class AccountController : Controller
     {
         _signInManager = signInManager;
         _userManager = userManager;
+    }
+
+    [Authorize]
+    [HttpGet]
+    public IActionResult ChangePassword()
+    {
+        return View();
+    }
+
+    [Authorize]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            TempData["Message"] = "User not found.";
+            return RedirectToAction("Login");
+        }
+
+        var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+        if (result.Succeeded)
+        {
+            TempData["Message"] = "Password changed successfully.";
+            await _signInManager.RefreshSignInAsync(user);
+            return RedirectToAction("Index", "Home");
+        }
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
+        }
+        return View(model);
     }
 
     [HttpGet]

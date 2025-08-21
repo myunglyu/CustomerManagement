@@ -49,27 +49,31 @@
     </div>
 
     <!-- Prescription Details -->
-    @if (ViewBag.Prescription != null)
-    {
-        var p = (WooriOptical.Models.Prescription)ViewBag.Prescription;
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4>Prescription Details</h4>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <p><strong>Date Issued:</strong> @p.DateIssued.ToString("yyyy-MM-dd")</p>
-                        <p><strong>Right Eye (OD):</strong> SPH: @p.RSphere.ToString("F2"), CYL: @p.RCylinder.ToString("F2"), AXIS: @p.RAxis</p>
-                        <p><strong>Left Eye (OS):</strong> SPH: @p.LSphere.ToString("F2"), CYL: @p.LCylinder.ToString("F2"), AXIS: @p.LAxis</p>
-                        <p><strong>PD:</strong> @p.PD.ToString("F1")</p>
-                        <p><strong>Height:</strong> @Model.Height mm</p>
-                        <p><strong>Notes:</strong> @p.Notes </p>
-                    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Prescription Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                @if (ViewBag.Prescription != null)
+                {
+                    var p = (WooriOptical.Models.Prescription)ViewBag.Prescription;
+                    <p><strong>Date Issued:</strong> @p.DateIssued.ToString("yyyy-MM-dd")</p>
+                    <p><strong>Right Eye (OD):</strong> SPH: @p.RSphere.ToString("F2"), CYL: @p.RCylinder.ToString("F2"), AXIS: @p.RAxis</p>
+                    <p><strong>Left Eye (OS):</strong> SPH: @p.LSphere.ToString("F2"), CYL: @p.LCylinder.ToString("F2"), AXIS: @p.LAxis</p>
+                    <p><strong>PD:</strong> @p.PD.ToString("F1")</p>
+                    <p><strong>Height:</strong> @Model.Height mm</p>
+                    <p><strong>Notes:</strong> @p.Notes </p>
+                }
+                else
+                {
+                    <p class="text-muted">No prescription found for this order.</p>
+                }
                 </div>
             </div>
         </div>
-    }
+    </div>
 
     <!-- Frame Details -->
     <div class="card mb-4">

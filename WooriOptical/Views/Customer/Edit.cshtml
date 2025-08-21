@@ -48,7 +48,7 @@
     </div>
     <br>
     <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a asp-action="Index" class="btn btn-secondary" onclick="return confirm('Leave this page? Unsaved changes will be lost. Continue?');">Back to List</a>
+    <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-secondary" onclick="return confirm('Leave this page? Unsaved changes will be lost. Continue?');">Back to Customer Detail</a>
 </form>
 
 @section Scripts {
