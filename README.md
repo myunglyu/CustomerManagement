@@ -2,6 +2,9 @@
 
 This is a local-only, secure customer management system for optical stores, built with ASP.NET Core MVC, Entity Framework Core (SQLite), and Identity. It also includes a WinForms + WebView2 desktop host and PWA support.
 
+## Download Pre-Built Application
+[https://github.com/myunglyu/CustomerManagement/releases/tag/release]
+
 ## Features
 - Customer, order, and prescription management
 - Secure authentication with admin account
