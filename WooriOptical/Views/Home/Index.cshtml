@@ -1,8 +1,109 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<WooriOptical.Models.CustomerViewModel>
+
+@{
+    ViewData["Title"] = "Customers";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>Customer Search</h2>
+
+<form asp-action="Index" method="get" class="mb-3 row g-2">
+    <div class="col-auto">
+        <input type="text" name="searchName" value="@ViewBag.SearchName" class="form-control" placeholder="Search by name" />
+    </div>
+    <div class="col-auto">
+        <input type="text" name="searchPhone" value="@ViewBag.SearchPhone" class="form-control" placeholder="Search by phone" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-primary">Search</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+    </div>
+</form>
+
+<a asp-controller="Customer" asp-action="Create" class="btn btn-primary mb-3">Add New Customer</a>
+
+<div id="customerResults">
+    @if (Model != null && Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var customer in Model)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                    <td>@customer.Address</td>
+                    <td>
+                        <a asp-controller="Customer" asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-warning">Edit</a>
+                        <a asp-controller="Customer" asp-action="Details" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-info">Details</a>
+                        <a asp-controller="Customer" asp-action="Delete" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else if (ViewBag.SearchName != null || ViewBag.SearchPhone != null)
+    {
+        <div class="alert alert-warning" role="alert">
+            <strong>Customer Not Found</strong> - No customers match your search criteria.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            <strong>Search for customers</strong> - Enter a name or phone number to find customers.
+        </div>
+    }
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[asp-action="Index"]');
+            const resultsDiv = document.getElementById('customerResults');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const searchName = formData.get('searchName');
+                const searchPhone = formData.get('searchPhone');
+                
+                // Build query string
+                const params = new URLSearchParams();
+                if (searchName) params.append('searchName', searchName);
+                if (searchPhone) params.append('searchPhone', searchPhone);
+                
+                // Make AJAX request to the same controller and action
+                fetch(`@Url.Action("Index", "Home")?${params.toString()}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        // Parse the response to extract just the results
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newResults = doc.getElementById('customerResults');
+                        
+                        if (newResults) {
+                            resultsDiv.innerHTML = newResults.innerHTML;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        resultsDiv.innerHTML = '<div class="alert alert-danger">Error occurred during search.</div>';
+                    });
+            });
+        });
+    </script>
+}
+
+

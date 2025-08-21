@@ -1,21 +1,39 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WooriOptical.Models;
+using WooriOptical.Services;
 
 namespace WooriOptical.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ICustomerService _customerService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ICustomerService customerService)
     {
         _logger = logger;
+        _customerService = customerService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index(string? searchName, string? searchPhone)
     {
-        return View();
+        IEnumerable<CustomerViewModel> customers;
+        if (!string.IsNullOrWhiteSpace(searchName))
+        {
+            customers = await _customerService.FindCustomersByNameAsync(searchName);
+        }
+        else if (!string.IsNullOrWhiteSpace(searchPhone))
+        {
+            customers = await _customerService.FindCustomersByPhoneAsync(searchPhone);
+        }
+        else
+        {
+            customers = new List<CustomerViewModel>(); // Return empty list by default
+        }
+        ViewBag.SearchName = searchName;
+        ViewBag.SearchPhone = searchPhone;
+        return View(customers);
     }
 
     public IActionResult Privacy()
