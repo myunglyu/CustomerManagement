@@ -7,7 +7,6 @@ This is a local-only, secure customer management system for optical stores, buil
 - Secure authentication with admin account
 - Admin account seeded from `admin.json` at startup
 - Local-only access (no remote connections allowed)
-- PWA (Progressive Web App) support
 - WinForms + WebView2 desktop host
 - Single-file, self-contained deployment
 - Print support
