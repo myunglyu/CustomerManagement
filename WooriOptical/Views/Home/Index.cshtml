@@ -43,9 +43,9 @@
                     <td>@customer.Phone</td>
                     <td>@(customer.FormattedAddress ?? "-")</td>
                     <td>
-                        <a asp-controller="Customer" asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-warning">Edit</a>
+                        @* <a asp-controller="Customer" asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-warning">Edit</a> *@
                         <a asp-controller="Customer" asp-action="Details" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-info">Details</a>
-                        <a asp-controller="Customer" asp-action="Delete" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-danger">Delete</a>
+                        @* <a asp-controller="Customer" asp-action="Delete" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-danger">Delete</a> *@
                     </td>
                 </tr>
             }
