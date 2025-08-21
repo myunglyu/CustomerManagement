@@ -1,79 +1,81 @@
-/* Minimal print stylesheet: hide site chrome and make the order details content clean */
+/* Minimal print stylesheet: hide site chrome and keep order details clean */
 
-/* Remove global backgrounds and force black text */
+/* Reset backgrounds and force black text */
 html, body {
-	background: #fff !important;
-	color: #000 !important;
+  background: #fff !important;
+  color: #000 !important;
+  width: 100%;
+  height: 90%;
 }
 
-/* Hide navigation, header, footer and any buttons or interactive controls */
-nav, header, footer, .navbar, .footer, .alert, .btn, .btn-sm, .navbar-collapse, .navbar-toggleable-sm {
-	display: none !important;
+/* Hide navigation, header, footer, alerts, buttons, and interactive controls */
+nav, header, footer,
+.navbar, .navbar-collapse, .navbar-toggleable-sm,
+.footer, .alert, .btn, .btn-sm,
+button {
+  display: none !important;
 }
 
-/* Hide any links or anchors used for navigation */
-a { color: #000 !important; text-decoration: none !important; }
+/* Neutralize links */
+a {
+  color: #000 !important;
+  text-decoration: none !important;
+}
 
-/* Remove card chrome (borders, shadows, backgrounds) */
+/* Remove card chrome */
 .card, .card-header, .card-body {
-	background: transparent !important;
-    /* border: none !important; */
-	box-shadow: none !important;
-    border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  page-break-inside: avoid;
+  margin-bottom: 0.3rem !important;
+}
+.card-header, .card-body { padding: 0.4rem; }
 
+/* Tables */
+.table, .table-borderless {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+.table td, .table th {
+  border: none !important;
+  padding: 0.1rem 0.2rem !important;
+  color: #000 !important;
 }
 
-.card-header, .card-body { padding: 0.5rem; }
+/* Typography */
+body, .container {
+  font-family: Georgia, "Times New Roman", Times, serif !important;
+  font-size: 10pt !important;
+}
+h2, h4 {
+  margin: 0.1rem 0 0.2rem 0;
+  font-size: 10pt;
+  color: #000 !important;
+}
+p { margin: 0.2rem; }
+.badge { color: #000 !important; }
 
-/* Simplify tables for print */
-.table, .table-borderless { width: 100% !important; border-collapse: collapse !important; }
-.table td, .table th { border: none !important; padding: 0.15rem 0.25rem !important; color: #000 !important; }
-
-/* Typography: use serif for printed receipts and slightly larger font */
-body, .container { font-family: Georgia, "Times New Roman", Times, serif !important; font-size: 12pt !important; }
-h2, h4 { margin: 0.15rem 0 0.25rem 0; }
-
-/* Remove images that are not necessary for print */
+/* Remove images */
 img { display: none !important; }
 
-/* Ensure only the main content prints in case other elements remain */
+/* Content scope */
 main, .pb-3 { display: block; }
 
-/* Avoid breaking important blocks across pages when possible */
-.card { page-break-inside: avoid; }
-
-/* Force landscape and make content fit to page width */
-@page { size: Letter landscape; margin: -3mm 0; padding: 10mm; }
-
-@media print {
-	/* Ensure the main container uses full page width */
-	html, body { width: 100%; height: 100%; }
-	.container { max-width: 100% !important; width: 100% !important; padding: 0; }
-
-	/* Slightly reduce font size to help content fit on a single landscape page */
-	body, .container { font-size: 10pt !important; }
-    p { margin: 0.2rem; }
-
-	/* Make tables more compact */
-	.table td, .table th { padding: 0.1rem 0.2rem !important; }
-
-	/* Reduce spacing in headers */
-	h2, h4 { margin: 0.1rem 0 0.2rem 0; font-size: medium; color: #000 !important; }
-
-	/* Prevent cards from adding extra spacing */
-	.card { margin-bottom: 0.2rem !important; }
-
-	/* Remove any remaining interactive elements */
-	button, .btn { display: none !important; }
-
-	/* Double-print layout: two copies side-by-side */
-	.double-print { display: flex !important; gap: 8mm; }
-	.double-print .copy { width: 50% !important; box-sizing: border-box; padding: 4mm; }
-	/* hide original root content when copies are present */
-	.original { display: none !important; }
-
-    .print-copy-label { text-align: right; margin-bottom: 4mm; font-size: 10pt; }
-
-    #store-info { font-size: 10pt; text-align: center;}
+/* Page setup */
+@page {
+  size: Letter landscape;
+  margin: 8mm;
 }
 
+@media print {
+  .container { max-width: 100% !important; width: 100% !important; padding: 0;}
+
+  /* Double-print layout */
+  .double-print { display: flex !important; gap: 3mm; }
+  .double-print .copy { width: 50% !important; box-sizing: border-box; padding: 4mm; }
+  .original { display: none !important; }
+
+  .print-copy-label { text-align: right; margin-bottom: 6mm; font-size: 10pt; }
+  #store-info { font-size: 10pt; text-align: center; }
+}

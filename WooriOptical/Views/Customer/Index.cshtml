@@ -15,7 +15,7 @@
         <tr>
             <td>@customer.Name</td>
             <td>@customer.Email</td>
-            <td>@customer.FormattedPhone ?? "-"</td>
+            <td>@(customer.FormattedPhone ?? "-")</td>
             <td>@(customer.FormattedAddress ?? "-")</td>
             <td>
                 @* <a asp-controller="Customer" asp-action="Edit" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-warning">Edit</a> *@

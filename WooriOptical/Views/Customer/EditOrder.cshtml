@@ -8,9 +8,31 @@
     <h2>Edit Order</h2>
     
     <form asp-action="EditOrder" method="post">
-        <input asp-for="OrderId" type="hidden" />
-        <input asp-for="CustomerId" type="hidden" />
-        
+
+    <input asp-for="OrderId" type="hidden" />
+    <input asp-for="CustomerId" type="hidden" />
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group mb-3">
+                <label asp-for="PrescriptionId" class="control-label">Prescription</label>
+                <select asp-for="PrescriptionId" class="form-select">
+                    <option value="">-- Select Prescription --</option>
+                    @if (ViewBag.Prescriptions != null)
+                    {
+                        foreach (var prescription in (List<WooriOptical.Models.Prescription>)ViewBag.Prescriptions)
+                        {
+                            <option value="@prescription.PrescriptionId" selected="@(Model.PrescriptionId == prescription.PrescriptionId ? "selected" : null)">
+                                @prescription.DateIssued.ToString("MM/dd/yyyy") - SPH: R @prescription.RSphere.ToString("+0.00;-0.00")/L @prescription.LSphere.ToString("+0.00;-0.00") | CYL: R @prescription.RCylinder.ToString("+0.00;-0.00")/L @prescription.LCylinder.ToString("+0.00;-0.00") | AXIS: R @prescription.RAxis°/L @prescription.LAxis°
+                            </option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="PrescriptionId" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group mb-3">
