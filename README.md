@@ -8,7 +8,7 @@ This is a production-ready, secure customer management system for optical stores
 ## Features
 - Customer, order, and prescription management
 - Secure authentication with admin account
-- Admin account seeded from `admin.json` at startup
+- Admin account seeded from `admin.json` at build
 - Local-only access (no remote connections allowed)
 - WinForms + WebView2 desktop host
 - Single-file, self-contained deployment
