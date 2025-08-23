@@ -262,9 +262,17 @@ public class CustomerController : Controller
 
     public async Task<IActionResult> OrderDetails(Guid id)
     {
+        
         var order = await _context.Orders.FindAsync(id);
         if (order == null)
             return NotFound();
+
+        // Load customer details
+        if (order.CustomerId != Guid.Empty)
+        {
+            var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
+            ViewBag.Customer = customer;
+        }
 
         // Load prescription details if present
         if (order.PrescriptionId != Guid.Empty)
