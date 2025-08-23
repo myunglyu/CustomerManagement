@@ -30,7 +30,7 @@ a {
   page-break-inside: avoid;
   margin-bottom: 0.3rem !important;
 }
-.card-header, .card-body { padding: 0.4rem; }
+.card-header, .card-body { padding: 0.3rem; }
 
 /* Tables */
 .table, .table-borderless {
@@ -39,21 +39,21 @@ a {
 }
 .table td, .table th {
   border: none !important;
-  padding: 0.1rem 0.2rem !important;
+  padding: 0.1rem 0.1rem !important;
   color: #000 !important;
 }
 
 /* Typography */
 body, .container {
-  font-family: Georgia, "Times New Roman", Times, serif !important;
-  font-size: 10pt !important;
+  font-family: serif, "Times New Roman", Times, Georgia !important;
+  font-size: 9pt !important;
 }
 h2, h4 {
-  margin: 0.1rem 0 0.2rem 0;
+  margin: 0;
   font-size: 10pt;
   color: #000 !important;
 }
-p { margin: 0.2rem; }
+p { margin: 0; }
 .badge { color: #000 !important; }
 
 /* Remove images */
@@ -76,6 +76,6 @@ main, .pb-3 { display: block; }
   .double-print .copy { width: 50% !important; box-sizing: border-box; padding: 4mm; }
   .original { display: none !important; }
 
-  .print-copy-label { text-align: right; margin-bottom: 6mm; font-size: 10pt; }
-  #store-info { font-size: 10pt; text-align: center; }
+  .print-copy-label { text-align: right; margin-bottom: 6mm; font-size: 9pt; }
+  #store-info { font-size: 9pt; text-align: center; }
 }
