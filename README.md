@@ -92,8 +92,8 @@ This application includes enterprise-level features for production deployment:
    ```powershell
    dotnet run --project WooriOptical.Desktop/WooriOptical.Desktop.csproj
    ```
-   **Or Access from Browser**
-   [http://localhost:5000]
+   **Or Access from the browser**
+   
 
 ### Deployment
 - Use the following command to publish as a single-file, self-contained executable:
