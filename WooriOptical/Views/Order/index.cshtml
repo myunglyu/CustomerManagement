@@ -1,0 +1,48 @@
+@model IEnumerable<WooriOptical.Models.OrderViewModel>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2>Orders</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Order Date</th>
+            @* <th>Order Number</th> *@
+            <th>Customer Name</th>
+            <th>Customer Phone</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var order in Model)
+    {
+        <tr>
+            <td>@order.OrderDate.ToString("d")</td>
+            @* <td>@order.OrderId</td> *@
+            <td>@order.CustomerName</td>
+            <td>@order.CustomerPhone</td>
+            <td>        
+                @if (order.PayoffStatus == "Paid")
+                {
+                    <span class="badge bg-success">Paid</span>
+                }
+                else if (order.PayoffStatus == "Partial")
+                {
+                    <span class="badge bg-warning">Partial</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Pending</span>
+                }
+            </td>
+            <td>
+                <a asp-controller="Order" asp-action="Detail" asp-route-id="@order.OrderId" class="btn btn-sm btn-info">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

@@ -1,4 +1,4 @@
-@model WooriOptical.Models.Order
+@model WooriOptical.Models.OrderViewModel
 
 @{
     ViewData["Title"] = "Order Details";
@@ -20,14 +20,7 @@
                 {
                     <a asp-action="EditOrder" asp-route-id="@Model.OrderId" class="btn btn-warning btn-sm">Edit Order</a>
                 }
-                @if (ViewBag.Customer != null)
-                {
-                    <a asp-action="Details" asp-route-id="@Model.CustomerId" class="btn btn-secondary btn-sm">Back to Customer</a>
-                }
-                else
-                {
-                    <a asp-controller="Order" asp-action="Index" class="btn btn-secondary btn-sm">Back to Orders</a>
-                }
+                <a asp-controller="Order" asp-action="Index" class="btn btn-secondary btn-sm">Back to Orders</a>
             </div>
         </div>
         <div class="card-body">

@@ -23,8 +23,6 @@ public class CustomerController : Controller
         _logger = logger;
     }
 
-
-
     public async Task<IActionResult> Index(string? searchName, string? searchPhone)
     {
         try
@@ -130,21 +128,15 @@ public class CustomerController : Controller
         return View(model);
     }
 
-    // public async Task<IActionResult> Delete(Guid id)
-    // {
-    //     var customer = await _customerService.GetCustomerByIdAsync(id);
-    //     if (customer == null)
-    //         return NotFound();
-    //     return View(customer);
-    // }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await _customerService.DeleteCustomerAsync(id);
+        TempData["Message"] = "Customer deleted successfully.";
 
-    // [HttpPost, ActionName("Delete")]
-    // [ValidateAntiForgeryToken]
-    // public async Task<IActionResult> DeleteConfirmed(Guid id)
-    // {
-    //     await _customerService.DeleteCustomerAsync(id);
-    //     return RedirectToAction(nameof(Index));
-    // }
+        return RedirectToAction(nameof(Index));
+    }
 
     // Prescription Actions
     public async Task<IActionResult> CreatePrescription(Guid customerId)
