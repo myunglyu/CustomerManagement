@@ -1,0 +1,51 @@
+@using Microsoft.AspNetCore.Components.Forms
+@model List<string>
+
+@{
+    ViewData["Title"] = "Restore Database";
+}
+
+<h2>Restore Database</h2>
+<hr>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<form asp-action="RestoreDatabase" method="post" id="restoreForm">
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="filename">Select Backup File:</label>
+        <select id="filename" name="filename" class="form-control">
+            @foreach (var backup in Model)
+            {
+                <option value="@backup">@backup</option>
+            }
+        </select>
+        <br>
+        <button type="button" class="btn btn-primary" id="restoreButton" data-bs-toggle="modal" data-bs-target="#restoreModal">Restore</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+<!-- Restore Confirmation Modal -->
+<div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="restoreModalLabel">Confirm Restore</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to restore this database backup? This will delete current database.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Do Not Restore</button>
+                <button type="button" class="btn btn-danger" onclick="document.getElementById('restoreForm').submit();">Yes, Restore Backup</button>
+            </div>
+        </div>
+    </div>
+</div>

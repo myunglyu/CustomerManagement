@@ -5,6 +5,7 @@ namespace WooriOptical.Services
 {
     public interface IBackupService
     {
+        Task<bool> CreateBackupAsync();
         Task<bool> CreateBackupAsync(string backupPath);
         Task<bool> RestoreBackupAsync(string backupPath);
         Task<bool> CreateScheduledBackupAsync();
@@ -23,6 +24,15 @@ namespace WooriOptical.Services
             _configuration = configuration;
         }
 
+        public async Task<bool> CreateBackupAsync()
+        {
+            var backupDir = Path.Combine(AppContext.BaseDirectory, "Backups");
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var backupPath = Path.Combine(backupDir, $"WooriOptical_Backup_{timestamp}.db");
+
+            return await CreateBackupAsync(backupPath);
+        }
+
         public async Task<bool> CreateBackupAsync(string backupPath)
         {
             try
@@ -36,7 +46,7 @@ namespace WooriOptical.Services
 
                 // Extract the database file path from connection string
                 var dbPath = sourceDb.Replace("Data Source=", "").Trim();
-                
+
                 if (!File.Exists(dbPath))
                 {
                     _logger.LogError("Source database file not found: {DbPath}", dbPath);
@@ -52,14 +62,14 @@ namespace WooriOptical.Services
 
                 // Copy database file
                 File.Copy(dbPath, backupPath, overwrite: true);
-                
+
                 _logger.LogInformation("Database backup created successfully: {BackupPath}", backupPath);
-                return true;
+                return await Task.FromResult(true);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to create database backup: {BackupPath}", backupPath);
-                return false;
+                return await Task.FromResult(false);
             }
         }
 
@@ -69,7 +79,7 @@ namespace WooriOptical.Services
             {
                 if (!File.Exists(backupPath))
                 {
-                    _logger.LogError("Backup file not found: {BackupPath}", backupPath);
+                    _logger.LogError($"Backup file not found: {backupPath}");
                     return false;
                 }
 

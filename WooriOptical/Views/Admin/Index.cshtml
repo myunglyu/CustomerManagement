@@ -5,56 +5,108 @@
 }
 
 <h2>Admin Panel</h2>
+<hr>
 
-<div class="mb-3">
-    <a class="btn btn-primary" asp-action="CreateAccount" asp-controller="Admin">Create New Account</a>
-</div>
 @if (TempData["Message"] != null)
 {
     <div class="alert alert-info">
         @TempData["Message"]
     </div>
 }
-<h4>Manage Accounts</h4>
+<h4 id="manageAccountsHeader" class="clickable">
+    <span id="accountsChevron" style="transition: transform 0.2s;">&#9654;</span>
+    Manage Accounts
+</h4>
+<br>
 
 @if (Model == null || !Model.Any())
 {
     <div class="alert alert-warning">
-        No user accounts found. <a asp-action="CreateAccount" asp-controller="Admin">Create a new account</a>.
+        No user accounts found.
     </div>
 }
 else
 {
-<table class="table">
-    <thead>
-        <tr>
-            <th>User Name</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            @if (user.UserName == User.Identity.Name)
-            {
-                continue; // Skip the current logged-in user
-            }
+<div id="accountsSection" style="display: none;">
+    <div class="mb-3">
+        <a class="btn btn-primary" asp-action="CreateAccount" asp-controller="Admin">Create New Account</a>
+    </div>
+    <table class="table">
+        <thead>
             <tr>
-                <td>@user.UserName</td>
-                <td>@user.Email</td>
-                <td>
-                    @if (user.Role != null && user.Role.Any())
-                    {
-                        @user.Role
-                    }
-                </td>
-                <td>
-                    <a asp-action="EditAccount" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
-                </td>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                @if (user.UserName == User.Identity.Name)
+                {
+                    continue; // Skip the current logged-in user
+                }
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        @if (user.Role != null && user.Role.Any())
+                        {
+                            @user.Role
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="EditAccount" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-warning">Edit</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 }
+
+
+<h4 id="manageDataBaseHeader">
+    <span id="databaseChevron" style="transition: transform 0.2s;">&#9654;</span>
+    Manage Database
+</h4>
+<br>
+<div id="databaseSection" style="display: none;">
+    <div class="mb-3">
+        <form asp-action="BackupDatabase" asp-controller="Admin" method="post">
+            <button type="submit" class="btn btn-primary">Backup Database</button>
+        </form>
+        <br>
+        <a class="btn btn-warning" asp-action="RestoreDatabase" asp-controller="Admin">Restore Database</a>
+    </div>
+
+
+<script>
+    document.getElementById("manageAccountsHeader").onclick = toggleAccountsSection;
+    document.getElementById("manageDataBaseHeader").onclick = toggleDatabaseSection;
+
+    function toggleAccountsSection() {
+        var section = document.getElementById("accountsSection");
+        var chevron = document.getElementById("accountsChevron");
+        if (section.style.display === "none") {
+            section.style.display = "block";
+            chevron.innerHTML = "&#9660;"; // ▼
+        } else {
+            section.style.display = "none";
+            chevron.innerHTML = "&#9654;"; // ►
+        }
+    }
+
+    function toggleDatabaseSection() {
+        var section = document.getElementById("databaseSection");
+        var chevron = document.getElementById("databaseChevron");
+        if (section.style.display === "none") {
+            section.style.display = "block";
+            chevron.innerHTML = "&#9660;"; // ▼
+        } else {
+            section.style.display = "none";
+            chevron.innerHTML = "&#9654;"; // ►
+        }
+    }
+</script>

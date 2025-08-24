@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using WooriOptical.Models;
+using WooriOptical.Services;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace WooriOptical.Controllers;
 
@@ -11,11 +13,13 @@ public class AdminController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly IBackupService _backupService;
 
-    public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+    public AdminController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IBackupService backupService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _backupService = backupService;
     }
 
     [HttpGet]
@@ -149,7 +153,7 @@ public class AdminController : Controller
         {
             await _userManager.RemoveFromRolesAsync(user, currentRoles);
         }
-        
+
         if (!string.IsNullOrEmpty(updatedAccount.Role))
         {
             await _userManager.AddToRoleAsync(user, updatedAccount.Role);
@@ -184,6 +188,58 @@ public class AdminController : Controller
         else
         {
             TempData["Message"] = "Failed to delete user: " + string.Join(", ", result.Errors.Select(e => e.Description));
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> BackupDatabase()
+    {
+        var result = await _backupService.CreateBackupAsync();
+        if (result)
+        {
+            TempData["Message"] = "Database backup created successfully.";
+        }
+        else
+        {
+            TempData["Message"] = "Failed to create database backup.";
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public IActionResult RestoreDatabase()
+    {
+        var backups = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Backups"), "*.db")
+            .Select(Path.GetFileName)
+            .ToList();
+
+        return View(backups);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RestoreDatabase(string filename)
+    {
+        if (string.IsNullOrEmpty(filename))
+        {
+            TempData["Message"] = "Invalid backup filename.";
+            return RedirectToAction("Index");
+        }
+
+        var backupPath = Path.Combine(AppContext.BaseDirectory, "Backups", filename);
+
+        var result = await _backupService.RestoreBackupAsync(backupPath);
+        if (result)
+        {
+            TempData["Message"] = "Database restored successfully.";
+        }
+        else
+        {
+            TempData["Message"] = "Failed to restore database.";
         }
 
         return RedirectToAction("Index");
