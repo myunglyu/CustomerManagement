@@ -30,6 +30,7 @@ public class AdminController : Controller
             var roles = await _userManager.GetRolesAsync(user);
             accounts.Add(new Account
             {
+                Id = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 Password = string.Empty,
@@ -73,23 +74,24 @@ public class AdminController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> EditAccount(string userId)
+    public async Task<IActionResult> EditAccount(string id)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(id))
         {
             TempData["Message"] = "Invalid user ID.";
             return RedirectToAction("Index");
         }
 
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(id);
         if (user == null)
         {
             TempData["Message"] = "User not found.";
             return RedirectToAction("Index");
         }
 
-        var account = new Account
+        var account = new AccountViewModel
         {
+            Id = user.Id,
             UserName = user.UserName,
             Email = user.Email,
             Password = string.Empty, // Password should not be pre-filled
@@ -101,22 +103,36 @@ public class AdminController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditAccount(Account updatedAccount)
+    public async Task<IActionResult> EditAccount(AccountViewModel updatedAccount)
     {
         if (!ModelState.IsValid)
             return View(updatedAccount);
 
-        var user = await _userManager.FindByNameAsync(updatedAccount.UserName);
+        var user = await _userManager.FindByIdAsync(updatedAccount.Id);
         if (user == null)
         {
             TempData["Message"] = "User not found.";
             return RedirectToAction("Index");
         }
 
+        user.UserName = updatedAccount.UserName;
         user.Email = updatedAccount.Email;
+
+        var updateResult = await _userManager.UpdateAsync(user);
+        if (!updateResult.Succeeded)
+        {
+            foreach (var error in updateResult.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return View(updatedAccount);
+        }
+
+        // Handle password change if provided
         if (!string.IsNullOrEmpty(updatedAccount.Password))
         {
-            var passwordResult = await _userManager.ChangePasswordAsync(user, user.PasswordHash, updatedAccount.Password);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var passwordResult = await _userManager.ResetPasswordAsync(user, token, updatedAccount.Password);
             if (!passwordResult.Succeeded)
             {
                 foreach (var error in passwordResult.Errors)
@@ -127,8 +143,14 @@ public class AdminController : Controller
             }
         }
 
-        var roleResult = await _userManager.RemoveFromRoleAsync(user, (await _userManager.GetRolesAsync(user)).FirstOrDefault());
-        if (roleResult.Succeeded && !string.IsNullOrEmpty(updatedAccount.Role))
+        // Handle role changes
+        var currentRoles = await _userManager.GetRolesAsync(user);
+        if (currentRoles.Any())
+        {
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+        }
+        
+        if (!string.IsNullOrEmpty(updatedAccount.Role))
         {
             await _userManager.AddToRoleAsync(user, updatedAccount.Role);
         }
@@ -139,15 +161,15 @@ public class AdminController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteAccount(string userId)
+    public async Task<IActionResult> DeleteAccount(string id)
     {
-        if (string.IsNullOrEmpty(userId))
+        if (string.IsNullOrEmpty(id))
         {
             TempData["Message"] = "Invalid user ID.";
             return RedirectToAction("Index");
         }
 
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await _userManager.FindByIdAsync(id);
         if (user == null)
         {
             TempData["Message"] = "User not found.";

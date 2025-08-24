@@ -324,6 +324,24 @@ public class CustomerController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteOrder(Guid id)
+    {
+        var order = await _context.Orders.FindAsync(id);
+        if (order == null)
+        {
+            return NotFound();
+        }
+
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
+
+        TempData["Message"] = "Order deleted successfully.";
+
+        return RedirectToAction(nameof(Details), new { id = order.CustomerId });
+    }
+
     private string CalculatePaymentStatus(Order order)
     {
         // Parse deposit and balance values
@@ -344,13 +362,13 @@ public class CustomerController : Controller
         // if deposit = 0 then "Pending"
         // if balance due = 0 or balance due = balance paid then "Paid"
         // else "Partial"
-        
+
         if (deposit == 0)
             return "Pending";
-        
+
         if (balance <= 0 || (balance > 0 && balance == balancePaid))
             return "Paid";
-        
+
         return "Partial";
     }
 }
