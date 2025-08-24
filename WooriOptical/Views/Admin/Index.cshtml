@@ -1,0 +1,55 @@
+@model List<Account>
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h2>Admin Panel</h2>
+
+<div class="mb-3">
+    <a class="btn btn-primary" asp-action="CreateAccount" asp-controller="Admin">Create New Account</a>
+</div>
+
+<h4>Manage Accounts</h4>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">
+        No user accounts found. <a asp-action="CreateAccount" asp-controller="Admin">Create a new account</a>.
+    </div>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    @if (user.Role != null && user.Role.Any())
+                    {
+                        @user.Role
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-controller="Admin" asp-route-id="@user.Id" class="btn btn-primary">Edit</a>
+                    <form asp-action="Delete" asp-controller="Admin" asp-route-id="@user.Id" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}

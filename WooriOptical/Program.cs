@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using WooriOptical.Models;
@@ -125,6 +124,7 @@ app.MapHealthChecks("/health");
 using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     var logger = scope.ServiceProvider.GetService<ILoggerFactory>()?.CreateLogger("SeedAdmin");
     var adminJsonPath = Path.Combine(AppContext.BaseDirectory, "admin.json");
     if (File.Exists(adminJsonPath))
@@ -141,6 +141,40 @@ using (var scope = app.Services.CreateScope())
                 var password = root.GetProperty("Password").GetString();
                 if (!string.IsNullOrWhiteSpace(userName) && !string.IsNullOrWhiteSpace(password))
                 {
+                    // Ensure Admin role exists
+                    var adminRoleExists = await roleManager.RoleExistsAsync("Admin");
+                    if (!adminRoleExists)
+                    {
+                        var roleResult = await roleManager.CreateAsync(new IdentityRole("Admin"));
+                        if (!roleResult.Succeeded)
+                        {
+                            logger?.LogError("Failed to create Admin role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                            throw new Exception($"Failed to create Admin role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                        }
+                    }
+
+                    var managerRoleExists = await roleManager.RoleExistsAsync("Manager");
+                    if (!managerRoleExists)
+                    {
+                        var roleResult = await roleManager.CreateAsync(new IdentityRole("Manager"));
+                        if (!roleResult.Succeeded)
+                        {
+                            logger?.LogError("Failed to create Manager role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                            throw new Exception($"Failed to create Manager role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                        }
+                    }
+
+                    var UserRoleExists = await roleManager.RoleExistsAsync("User");
+                    if (!UserRoleExists)
+                    {
+                        var roleResult = await roleManager.CreateAsync(new IdentityRole("User"));
+                        if (!roleResult.Succeeded)
+                        {
+                            logger?.LogError("Failed to create User role: {Errors}", string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                            throw new Exception($"Failed to create User role: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                        }
+                    }
+
                     var adminUser = await userManager.FindByNameAsync(userName);
                     if (adminUser == null)
                     {
@@ -152,6 +186,14 @@ using (var scope = app.Services.CreateScope())
                             throw new Exception($"Failed to create admin user: {string.Join(", ", result.Errors.Select(e => e.Description))}");
                         }
                         await userManager.AddToRoleAsync(user, "Admin");
+                    }
+                    else
+                    {
+                        // Ensure user is in Admin role
+                        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+                        {
+                            await userManager.AddToRoleAsync(adminUser, "Admin");
+                        }
                     }
                 }
             }
