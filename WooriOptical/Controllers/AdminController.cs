@@ -217,6 +217,12 @@ public class AdminController : Controller
             .Select(Path.GetFileName)
             .ToList();
 
+        if (!backups.Any())
+        {
+            TempData["Message"] = "No backups available.";
+            return RedirectToAction("Index");
+        }
+
         return View(backups);
     }
 
