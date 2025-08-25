@@ -211,6 +211,39 @@ public class AdminController : Controller
     }
 
     [HttpGet]
+    public IActionResult ManageBackups()
+    {
+        var backups = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Backups"), "*.db")
+            .Select(Path.GetFileName)
+            .ToList();
+
+        return View(backups);
+    }
+
+    public IActionResult DownloadBackup(string fileName)
+    {
+        var backupPath = Path.Combine(AppContext.BaseDirectory, "Backups", fileName);
+        if (!System.IO.File.Exists(backupPath))
+            return NotFound();
+
+        var contentType = "application/octet-stream";
+        return File(System.IO.File.ReadAllBytes(backupPath), contentType, fileName);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteBackup(string fileName)
+    {
+        var backupPath = Path.Combine(AppContext.BaseDirectory, "Backups", fileName);
+        if (!System.IO.File.Exists(backupPath))
+            return NotFound();
+
+        System.IO.File.Delete(backupPath);
+        TempData["Message"] = "Backup deleted successfully.";
+        return RedirectToAction("ManageBackups");
+    }
+
+    [HttpGet]
     public IActionResult RestoreDatabase()
     {
         var backups = Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "Backups"), "*.db")
@@ -243,5 +276,26 @@ public class AdminController : Controller
         }
 
         return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UploadBackup(IFormFile backupFile)
+    {
+        if (backupFile != null && backupFile.Length > 0)
+        {
+            var backupDir = Path.Combine(AppContext.BaseDirectory, "Backups");
+            Directory.CreateDirectory(backupDir);
+            var filePath = Path.Combine(backupDir, Path.GetFileName(backupFile.FileName));
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await backupFile.CopyToAsync(stream);
+            }
+            TempData["Message"] = "Backup uploaded successfully.";
+        }
+        else
+        {
+            TempData["Message"] = "No file selected.";
+        }
+        return RedirectToAction("ManageBackups");
     }
 }

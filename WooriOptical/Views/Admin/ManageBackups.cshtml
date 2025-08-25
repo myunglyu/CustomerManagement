@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Manage Backups";
+}
+
+<h2>Manage Backups</h2>
+<hr>
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<h4>Upload Backup</h4>
+<div class="align-items-center">
+    <form asp-action="UploadBackup" asp-controller="Admin" method="post" enctype="multipart/form-data" class="align-items-center">
+        <div class="mb-2">
+            <span>Select backup file:</span><input type="file" name="backupFile" class="form-control" required />
+        </div>
+        <div class="mb-2">
+            <button type="submit" class="btn btn-secondary">Upload Backup</button>
+        </div>
+    </form>
+</div>
+<hr>
+
+<h4>Existing Backups</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Backup File</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var backup in Model)
+            {
+                <tr>
+                    <td class="text-center">@backup</td>
+                    <td class="text-center">
+                        <form asp-action="RestoreDatabase" asp-route-filename="@backup" method="post">
+                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to restore this backup?');">Restore</button>
+                        </form>
+                    </td>
+                    <td class="text-center">
+                        <a asp-action="DownloadBackup" asp-route-filename="@backup" class="btn btn-success btn-sm">Download</a>
+                    </td>
+                    <td class="text-center">
+                        <form asp-action="DeleteBackup" asp-route-filename="@backup" method="post" onsubmit="return confirm('Are you sure you want to delete this backup?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        
+        else
+        {
+            <p>No backups found.</p>
+        }
+    </tbody>
+</table>
