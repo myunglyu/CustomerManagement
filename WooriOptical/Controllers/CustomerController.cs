@@ -202,10 +202,13 @@ public class CustomerController : Controller
     }
 
     // Order Actions
-    public async Task<IActionResult> CreateOrder(Guid customerId)
+    [HttpGet]
+    public async Task<IActionResult> CreateOrder(Guid customerId, Guid prescriptionId)
     {
         var customer = await _customerService.GetCustomerByIdAsync(customerId);
-        if (customer == null)
+        var prescription = await _context.Prescriptions.FindAsync(prescriptionId);
+
+        if (customer == null || prescription == null)
             return NotFound();
 
         // Get customer's prescriptions for dropdown
@@ -221,7 +224,8 @@ public class CustomerController : Controller
             OrderId = Guid.NewGuid(),
             CustomerId = customerId,
             OrderDate = DateTime.Now,
-            PayoffStatus = "Pending"
+            PayoffStatus = "Pending",
+            PrescriptionId = prescriptionId
         };
 
         return View(order);

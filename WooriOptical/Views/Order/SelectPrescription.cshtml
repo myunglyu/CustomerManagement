@@ -1,0 +1,107 @@
+@using Microsoft.CodeAnalysis.CSharp.Syntax
+@model CustomerViewModel
+
+@{
+    ViewData["Title"] = "Select Prescription";
+}
+
+<h2>Select Prescription for @Model.Name</h2>
+<hr>
+
+@if (Model.Prescriptions != null && Model.Prescriptions.Any()){
+    <form asp-action="CreateOrder" asp-controller="Customer" method="get">
+        <input type="hidden" name="customerId" value="@Model.CustomerId" />
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Date Issued</th>
+                    <th>RSph</th>
+                    <th>RCyl</th>
+                    <th>RAx</th>
+                    <th>LSph</th>
+                    <th>LCyl</th>
+                    <th>LAx</th>
+                    <th>PD</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var prescription in Model.Prescriptions)
+                    {
+                        <tr class="customer-option">
+                        <td>
+                            <input type="radio" name="prescriptionId" value="@prescription.PrescriptionId" />
+                        </td>
+                        <td>@prescription.DateIssued</td>
+                        <td>@prescription.RSphere</td>
+                        <td>@prescription.RCylinder</td>
+                        <td>@prescription.RAxis</td>
+                        <td>@prescription.LSphere</td>
+                        <td>@prescription.LCylinder</td>
+                        <td>@prescription.LAxis</td>
+                        <td>@prescription.PD</td>
+                        <td>@prescription.Notes</td>
+                    </tr>
+                    }
+            </tbody>
+        </table>
+        <div class="mt-3">
+            @if (Model.Prescriptions != null && Model.Prescriptions.Any())
+            {
+                <button type="submit" class="btn btn-primary">Next - Enter Order Details</button>
+            }
+            <a href="#" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#backToOrdersModal">Cancel</a>
+        </div>
+    </form>
+}
+else
+{
+    <tr>
+        <td colspan="10" class="text-center">No prescriptions found.</td>
+    </tr>
+    <tr>
+        <td colspan="10" class="text-center">
+            <form method="get" asp-action="CreatePrescription" asp-controller="Customer">
+                <input type="hidden" name="customerId" value="@Model.CustomerId" />
+                <button type="submit" class="btn btn-primary">Add New Prescription</button>
+            </form>
+        </td>
+    </tr>
+}
+
+<!-- Back to Orders Confirmation Modal -->
+<div class="modal fade" id="backToOrdersModal" tabindex="-1" aria-labelledby="backToOrdersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="backToOrdersModalLabel">Confirm Navigation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to go back to the Orders page? Unsaved changes will be lost.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Stay</button>
+                <a asp-action="Index" class="btn btn-danger">Leave Page</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('searchCustomer').addEventListener('input', function () {
+        var filter = this.value.toLowerCase();
+        var rows = document.querySelectorAll('.customer-option');
+
+        rows.forEach(function (row) {
+            var name = row.cells[1].textContent.toLowerCase();
+            var phone = row.cells[2].textContent.toLowerCase();
+            if (name.includes(filter) || phone.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+</script>

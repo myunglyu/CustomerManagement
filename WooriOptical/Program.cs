@@ -59,6 +59,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<WooriOptical.Services.ICustomerService, WooriOptical.Services.CustomerService>();
 builder.Services.AddScoped<WooriOptical.Services.IBackupService, WooriOptical.Services.BackupService>();
 builder.Services.AddScoped<WooriOptical.Services.IOrderService, WooriOptical.Services.OrderService>();
+builder.Services.AddScoped<WooriOptical.Services.IPrescriptionService, WooriOptical.Services.PrescriptionService>();
 // Register IHttpClientFactory for outbound HTTP calls (USPS lookup)
 builder.Services.AddHttpClient();
 

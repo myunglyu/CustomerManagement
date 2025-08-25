@@ -87,7 +87,17 @@
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>Orders</h4>
-                    <a asp-action="CreateOrder" asp-route-customerId="@Model.CustomerId" class="btn btn-primary btn-sm">Add New Order</a>
+                    @if (Model.Prescriptions != null && Model.Prescriptions.Any())
+                    {
+                        <a asp-action="CreateOrder" asp-route-customerId="@Model.CustomerId" asp-route-prescriptionId="@Model.Prescriptions[0].PrescriptionId" class="btn btn-primary btn-sm">Add New Order</a>
+                    }
+                    else
+                    {   
+                        <div>
+                            <span class="text-danger">Add a prescription to create an order.</span>
+                            <button class="btn btn-primary btn-sm" disabled>Add New Order</button>
+                        </div>
+                    }
                 </div>
                 <div class="card-body">
                     @* TODO: Replace with actual order data *@
