@@ -125,6 +125,7 @@ WooriOptical/admin.json
 
 # Database files
 WooriOptical/WooriOptical.db
+**/*.db*
 *.db
 *.sqlite
 *.sqlite3
